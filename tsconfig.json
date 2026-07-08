@@ -1,19 +1,38 @@
 {
   "compilerOptions": {
-    "target": "ES2017",
+    "target": "es2022",
     "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "incremental": true,
+    "jsx": "react-jsx", // JSX 코드 생성 방식 (React 17+ 변환 방식 사용)
+    "useDefineForClassFields": true, // 클래스 필드를 Object.defineProperty 방식으로 정의 (ES 표준 준수)
+    "erasableSyntaxOnly": true, // 런타임에 제거 가능한 문법(enum 등 제외)만 사용하도록 강제 (최적화)
+
+    /* 모듈 설정 (Modules) */
+    "module": "ESNext", // 모듈 코드 생성 방식
+    "moduleResolution": "bundler", // 모듈 해석 전략 (번들러 사용 시 권장)
+    "resolveJsonModule": true, // .json 파일을 모듈로 import 허용
+    "allowImportingTsExtensions": false, // .ts/.tsx 확장자를 import 경로에 명시 금지
+    "verbatimModuleSyntax": true, // import/export 구문을 명시적으로 유지하거나 제거 (최적화)
+    "moduleDetection": "force", // 모든 파일을 모듈로 감지하여 처리
+    "isolatedModules": true, // 각 파일을 독립적인 모듈로 변환 (Next.js/Babel/SWC 사용 시 필수)
+
+    /* 상호 운용성 (Interop) */
+    "allowJs": true, // .js/.jsx 파일도 컴파일 대상에 포함
+    "esModuleInterop": true, // CommonJS 모듈을 ES 모듈처럼 import 허용
+    "forceConsistentCasingInFileNames": true, // 파일 이름의 대소문자 일관성 강제
+    "skipLibCheck": true, // 정의 파일(.d.ts)의 타입 검사 건너뛰기 (빌드 속도 향상)
+
+    /* 타입 검사 (Type Checking) */
+    "strict": true, // 모든 엄격한 타입 검사 옵션 활성화
+    "strictNullChecks": true, // null과 undefined를 엄격하게 체크
+    "exactOptionalPropertyTypes": true, // 옵셔널 속성에 undefined 할당 금지
+    "noFallthroughCasesInSwitch": true, // switch 문에서 break 없이 다음 case로 넘어가는 것 방지
+    "noUncheckedSideEffectImports": true, // 부작용만 있는 import가 유효한 모듈인지 검사
+
+    /* 빌드 및 출력 (Emit & Build) */
+    "noEmit": true, // 컴파일 결과 파일(.js)을 생성하지 않음 (Next.js가 처리)
+    "incremental": true, // 이전 컴파일 정보를 디스크에 저장하여 재컴파일 속도 향상
     "plugins": [
+      // Next.js 통합을 위한 플러그인
       {
         "name": "next"
       }
@@ -22,13 +41,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts"
-  ],
-  "exclude": ["node_modules"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],
+  "exclude": ["node_modules", "temp/*"]
 }
