@@ -14,9 +14,15 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Push to target repository
+      - name: Pushes to another repository
         env:
           TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+          DESTINATION_REPOSITORY: 'jisupark123/doda-web'
+          TARGET_BRANCH: 'main'
         run: |
-          git remote add target "https://${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
-          git push -f target main
+          # 대상 리포지토리 URL 설정 (Fine-grained 토큰 호환)
+          TARGET_URL="https://${TARGET_REPO_TOKEN}@github.com/${DESTINATION_REPOSITORY}.git"
+          
+          # 기존 커밋 히스토리와 작성자, 메시지를 그대로 유지하며 동기화
+          git remote add target "$TARGET_URL"
+          git push -f target HEAD:${TARGET_BRANCH}
