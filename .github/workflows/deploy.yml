@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy:
+    if: github.repository == 'DodaGames/doda-web'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
