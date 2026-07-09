@@ -1,14 +1,15 @@
-name: git push into another repo to deploy to vercel
+name: Deploy to Vercel via Target Repo
 
 on:
   push:
     branches: [main]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -17,13 +18,5 @@ jobs:
         env:
           TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
         run: |
-          if [ -z "$TARGET_REPO_TOKEN" ]; then
-            echo "❌ 오류: TARGET_REPO_TOKEN이 비어 있습니다."
-            exit 1
-          fi
-
-          # 아이디를 명시하지 않고 토큰 자체만으로 인증하도록 변경 (Fine-grained Token 호환성 해결)
-          TARGET_URL="https://${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
-          
-          git remote add target "$TARGET_URL"
+          git remote add target "https://${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
           git push -f target main
