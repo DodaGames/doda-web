@@ -9,19 +9,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Pushes to another repository
-        id: push_directory
-        uses: cpina/github-action-push-to-another-repository@v1.7.3
-        env:
-          API_TOKEN_GITHUB: ${{ secrets.TARGET_REPO_TOKEN }}
         with:
-          source-directory: '.'
-          destination-github-username: 'jisupark123'
-          destination-repository-name: 'doda-web'
-          user-email: 'jisupark2000@gmail.com'
-          commit-message: ${{ github.event.commits[0].message }}
-          target-branch: main
+          fetch-depth: 0 # 히스토리를 모두 가져와서 그대로 푸시하기 위함
 
-      - name: Test get variable exported by push-to-another-repository
-        run: echo $DESTINATION_CLONED_DIRECTORY
+      - name: Push to target repository
+        env:
+          TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
+        run: |
+          # 1. 시크릿 토큰이 제대로 로드되었는지 확인 (빈 값 방지)
+          if [ -z "$TARGET_REPO_TOKEN" ]; then
+            echo "❌ 오류: TARGET_REPO_TOKEN이 비어 있습니다."
+            echo "Repository Secrets에 토큰이 올바르게 등록되었는지(Variables가 아닌 Secrets인지) 확인하세요."
+            exit 1
+          fi
+
+          # 2. Vercel 배포용 타겟 리포지토리 설정
+          TARGET_URL="https://jisupark123:${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
+          
+          # 3. 리포지토리에 푸시 (강제 푸시 적용하여 싱크 맞춤)
+          git remote add target "$TARGET_URL"
+          git push -f target main
