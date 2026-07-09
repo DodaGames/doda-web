@@ -10,22 +10,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # 히스토리를 모두 가져와서 그대로 푸시하기 위함
+          fetch-depth: 0
 
       - name: Push to target repository
         env:
           TARGET_REPO_TOKEN: ${{ secrets.TARGET_REPO_TOKEN }}
         run: |
-          # 1. 시크릿 토큰이 제대로 로드되었는지 확인 (빈 값 방지)
           if [ -z "$TARGET_REPO_TOKEN" ]; then
             echo "❌ 오류: TARGET_REPO_TOKEN이 비어 있습니다."
-            echo "Repository Secrets에 토큰이 올바르게 등록되었는지(Variables가 아닌 Secrets인지) 확인하세요."
             exit 1
           fi
 
-          # 2. Vercel 배포용 타겟 리포지토리 설정
-          TARGET_URL="https://jisupark123:${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
+          # 아이디를 명시하지 않고 토큰 자체만으로 인증하도록 변경 (Fine-grained Token 호환성 해결)
+          TARGET_URL="https://${TARGET_REPO_TOKEN}@github.com/jisupark123/doda-web.git"
           
-          # 3. 리포지토리에 푸시 (강제 푸시 적용하여 싱크 맞춤)
           git remote add target "$TARGET_URL"
           git push -f target main
